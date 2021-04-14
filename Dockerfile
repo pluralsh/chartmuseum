@@ -24,6 +24,4 @@ RUN apk add --no-cache cifs-utils ca-certificates
 
 COPY --from=0 /chartmuseum /chartmuseum
 
-USER 1000:1000
-
 ENTRYPOINT ["/chartmuseum"]

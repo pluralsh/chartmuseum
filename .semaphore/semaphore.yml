@@ -1,0 +1,28 @@
+version: v1.0
+name: Docker
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Build
+    task:
+      secrets:
+      - name: GCP
+      - name: gcp-test
+      - name: forge
+      - name: deploy-key
+      prologue:
+        commands:
+        # Authenticate using the file injected from the secret
+        - gcloud auth activate-service-account --key-file=.secrets/gcp-piazzaapp.json
+        # Don't forget -q to silence confirmation prompts
+        - gcloud auth configure-docker -q
+        - docker login -u mguarino46@gmail.com -p $FORGE_ACCESS_TOKEN dkr.piazza.app
+        - checkout
+      jobs:
+        - name: docker build
+          commands:
+            - checkout
+            - docker build -t gcr.io/piazzaapp/chartmuseum:v0.13.2 .
+            - docker push gcr.io/piazzaapp/chartmuseum:v0.13.2
