@@ -10,7 +10,7 @@ blocks:
       secrets:
       - name: GCP
       - name: gcp-test
-      - name: forge
+      - name: plural
       - name: deploy-key
       prologue:
         commands:
@@ -18,11 +18,12 @@ blocks:
         - gcloud auth activate-service-account --key-file=.secrets/gcp-piazzaapp.json
         # Don't forget -q to silence confirmation prompts
         - gcloud auth configure-docker -q
-        - docker login -u mguarino46@gmail.com -p $FORGE_ACCESS_TOKEN dkr.piazza.app
+        - docker login -u mjg@plural.sh -p $PLURAL_ACCESS_TOKEN dkr.plural.sh
         - checkout
       jobs:
         - name: docker build
           commands:
             - checkout
-            - docker build -t gcr.io/piazzaapp/chartmuseum:v0.13.2 .
+            - docker build -t gcr.io/piazzaapp/chartmuseum:v0.13.2 -t dkr.plural.sh/plural/chartmuseum:v0.13.2 .
             - docker push gcr.io/piazzaapp/chartmuseum:v0.13.2
+            - docker push dkr.plural.sh/plural/chartmuseum:v0.13.2
